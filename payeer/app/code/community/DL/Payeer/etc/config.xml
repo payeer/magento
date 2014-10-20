@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+
+<config>
+    <global>
+        <helpers>
+            <dlpayeer>
+                <class>DL_Payeer_Helper</class>
+            </dlpayeer>
+        </helpers>
+
+        <blocks>
+            <dlpayeer>
+                <class>DL_Payeer_Block</class>
+            </dlpayeer>
+        </blocks>
+
+        <models>
+            <dlpayeer>
+                <class>DL_Payeer_Model</class>
+                <resourceModel>dlpayeer_mysql4</resourceModel>
+            </dlpayeer>
+        </models>
+        <resources>
+            <dlpayeer_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </dlpayeer_write>
+            <dlpayeer_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </dlpayeer_read>
+        </resources>
+
+        <events>
+            <controller_front_init_routers>
+                <observers>
+                    <dlpayeer>
+                        <class>DL_Payeer_Controller_Router</class>
+                        <method>initControllerRouters</method>
+                    </dlpayeer>
+                </observers>
+            </controller_front_init_routers>
+        </events>
+    </global>
+
+    <frontend>
+        <translate>
+            <modules>
+                <DL_Payeer>
+                    <files>
+                        <default>DL_Payeer.csv</default>
+                    </files>
+                </DL_Payeer>
+            </modules>
+        </translate>
+        <routers>
+            <dlpayeer>
+                <use>standard</use>
+                <args>
+                    <module>DL_Payeer</module>
+                    <frontName>dlpayeer</frontName>
+                </args>
+            </dlpayeer>
+        </routers>
+    </frontend>
+
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <dlpayeer translate="title" module="dlpayeer">
+                                            <title>Payeer section</title>
+                                            <sort_order>400</sort_order>
+                                        </dlpayeer>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <translate>
+            <modules>
+                <DL_Payeer>
+                    <files>
+                        <default>DL_Payeer.csv</default>
+                    </files>
+                </DL_Payeer>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <default>
+        <payment>
+            <dlpayeer>
+                <active>0</active>
+                <title>Payeer</title>
+                <payment_text><![CDATA[Вы сможете оплачивать услуги, принимать и переводить деньги по всему миру используя бесплатный (0%) Payeer перевод, который можно отправить любому на земле, при этом получателю не потребуется даже регистрация в нашей системе. Либо совершать внешние переводы в различные платежные системы, на номера банковских карт, в любые банки, выпускать виртуальные карты.]]></payment_text>
+                <allowspecific>0</allowspecific>
+                <model>dlpayeer/method_dlpayeer</model>
+                <enable_log>1</enable_log>
+				<sMerchantURL>//payeer.com/merchant/</sMerchantURL>
+                <sInvDesc>Payment # </sInvDesc>
+				<StatusUrl>http://YOUR_DOMAIN/dlpayeer/status</StatusUrl>
+				<SuccessUrl>http://YOUR_DOMAIN/dlpayeer/success</SuccessUrl>
+				<FailUrl>http://YOUR_DOMAIN/dlpayeer/failure</FailUrl>
+            </dlpayeer>
+        </payment>
+    </default>
+</config>
