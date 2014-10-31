@@ -7,7 +7,8 @@ class DL_Payeer_GateController extends Mage_Core_Controller_Front_Action
 
     protected function _expireAjax()
     {
-        if (!Mage::getSingleton('checkout/session')->getQuote()->hasItems()) {
+        if (!Mage::getSingleton('checkout/session')->getQuote()->hasItems()) 
+		{
             $this->getResponse()->setHeader('HTTP/1.1', '403 Session Expired');
             exit;
         }
@@ -21,22 +22,27 @@ class DL_Payeer_GateController extends Mage_Core_Controller_Front_Action
         $status = 'pending';
 
         $order = Mage::getModel('sales/order')->load($session->getLastOrderId());
-        $order->setState($state,
+        $order->setState(
+			$state,
             $status,
             $this->__('Customer redirected to payment Gateway Payeer'),
-            false);
+            false
+		);
+			
         $order->save();
 
         $payment = $order->getPayment()->getMethodInstance();
-        if (!$payment) {
+		
+        if (!$payment) 
+		{
             $payment = Mage::getSingleton("dlpayeer/method_dlpayeer");
         }
 
         $dataForSending = $payment->preparePaymentData($order);
         $this->getResponse()->setHeader('Content-type', 'text/html; charset=UTF8');
         $this->getResponse()->setBody(
-            $this->getLayout()->createBlock('dlpayeer/redirect')->setGateUrl(
-                $payment->getGateUrl())->setPostData($dataForSending)->toHtml()
+			$this->getLayout()->createBlock('dlpayeer/redirect')->setGateUrl(
+			$payment->getGateUrl())->setPostData($dataForSending)->toHtml()
         );
     }
 
@@ -62,7 +68,6 @@ class DL_Payeer_GateController extends Mage_Core_Controller_Front_Action
 					$_POST['m_status'],
 					$m_key);
 			$sign_hash = strtoupper(hash('sha256', implode(":", $arHash)));
-			
 			
 			// проверка принадлежности ip списку доверенных ip
 			$list_ip_str = str_replace(' ', '', Mage::getStoreConfig('payment/dlpayeer/IPFilter'));
@@ -96,93 +101,117 @@ class DL_Payeer_GateController extends Mage_Core_Controller_Front_Action
 			
 			// запись в логи если требуется
 			$log_text = 
-			"--------------------------------------------------------\n".
-			"operation id		".$_POST["m_operation_id"]."\n".
-			"operation ps		".$_POST["m_operation_ps"]."\n".
-			"operation date		".$_POST["m_operation_date"]."\n".
-			"operation pay date	".$_POST["m_operation_pay_date"]."\n".
-			"shop				".$_POST["m_shop"]."\n".
-			"order id			".$_POST["m_orderid"]."\n".
-			"amount				".$_POST["m_amount"]."\n".
-			"currency			".$_POST["m_curr"]."\n".
-			"description		".base64_decode($_POST["m_desc"])."\n".
-			"status				".$_POST["m_status"]."\n".
-			"sign				".$_POST["m_sign"]."\n\n";
+				"--------------------------------------------------------\n".
+				"operation id		".$_POST["m_operation_id"]."\n".
+				"operation ps		".$_POST["m_operation_ps"]."\n".
+				"operation date		".$_POST["m_operation_date"]."\n".
+				"operation pay date	".$_POST["m_operation_pay_date"]."\n".
+				"shop				".$_POST["m_shop"]."\n".
+				"order id			".$_POST["m_orderid"]."\n".
+				"amount				".$_POST["m_amount"]."\n".
+				"currency			".$_POST["m_curr"]."\n".
+				"description		".base64_decode($_POST["m_desc"])."\n".
+				"status				".$_POST["m_status"]."\n".
+				"sign				".$_POST["m_sign"]."\n\n";
 			
-			if (Mage::getStoreConfig('payment/dlpayeer/enable_log') == 1)
+			$log_file = Mage::getStoreConfig('payment/dlpayeer/enable_log');
+			
+			if (!empty($log_file))
 			{
-				file_put_contents($_SERVER['DOCUMENT_ROOT'].'/var/log/dl_payeer.log', $log_text, FILE_APPEND);
+				file_put_contents($_SERVER['DOCUMENT_ROOT'] . $log_file, $log_text, FILE_APPEND);
 			}
 				
 			// проверка цифровой подписи и ip сервера
-			if ($_POST["m_sign"] == $sign_hash && $_POST['m_status'] == "success" && $valid_ip)
+			if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success' && $valid_ip)
 			{
 				$order = Mage::getModel('sales/order')->loadByIncrementId($_POST['m_orderid']);
                 if ($order->getState() == Mage_Sales_Model_Order::STATE_NEW) 
 				{
-                    if ($order->canInvoice()) {
+                    if ($order->canInvoice()) 
+					{
                         $invoice = $order->prepareInvoice();
                         $invoice->register()->capture();
                         $order->addRelatedObject($invoice);
                     }
+					
                     $result = $this->_sendEmailAfterPaymentSuccess($order);
+					
 					$order->setState($state,
-					$paidStatus,
-					$this->__($helper->__('The amount has been authorized and captured by Payeer.')),
-					$result);
+						$paidStatus,
+						$this->__($helper->__('The amount has been authorized and captured by Payeer.')),
+						$result
+					);
+					
 					$order->save();
                 }
-                echo $_POST['m_orderid']."|success";
+                exit ($_POST['m_orderid'] . '|success');
 			}
 			else 
 			{
-				$to = Mage::getStoreConfig('payment/dlpayeer/sAdminEmail');
-				$subject = "Payment error";
-				$message = "Failed to make the payment through the system Payeer for the following reasons:\n\n";
-				
-				if ($_POST["m_sign"] != $sign_hash)
+				$order = Mage::getModel('sales/order')->loadByIncrementId($_POST['m_orderid']);
+                if ($order->getState() == Mage_Sales_Model_Order::STATE_NEW) 
 				{
-					$message.=" - Do not match the digital signature\n";
-				}
+					$order->addStatusToHistory(
+						$order->getStatus(),
+						$helper->__('Payment failed'),
+						false
+					);
+					
+					$order->save();
+					$order->cancel()->save();
+					
+					$to = Mage::getStoreConfig('payment/dlpayeer/sAdminEmail');
 				
-				if ($_POST['m_status'] != "success")
-				{
-					$message.=" - The payment status is not success\n";
-				}
-				
-				if (!$valid_ip)
-				{
-					$message.=" - the ip address of the server is not trusted\n";
-					$message.="   trusted ip: ".Mage::getStoreConfig('payment/dlpayeer/IPFilter')."\n";
-					$message.="   ip of the current server: ".$_SERVER['REMOTE_ADDR']."\n";
-				}
-				
-				$message .= "\n".$log_text;
-				
-				$headers = "From: no-reply@".$_SERVER['HTTP_SERVER']."\r\nContent-type: text/plain; charset=utf-8 \r\n";
-				mail($to, $subject, $message, $headers);
-				
-				echo $_POST['m_orderid']."|error";
+					$subject = $helper->__("Payment error");
+					$message = $helper->__("Failed to make the payment through the system Payeer for the following reasons:") . "\n\n";
+					
+					if ($_POST["m_sign"] != $sign_hash)
+					{
+						$message .= $helper->__(" - Do not match the digital signature") . "\n";
+					}
+					
+					if ($_POST['m_status'] != "success")
+					{
+						$message .= $helper->__(" - The payment status is not success") . "\n";
+					}
+					
+					if (!$valid_ip)
+					{
+						$message .= $helper->__(" - the ip address of the server is not trusted") . "\n";
+						$message .= $helper->__("   trusted ip: ") . Mage::getStoreConfig('payment/dlpayeer/IPFilter') . "\n";
+						$message .= $helper->__("   ip of the current server: ") . $_SERVER['REMOTE_ADDR'] . "\n";
+					}
+					
+					$message .= "\n" . $log_text;
+					
+					$headers = "From: no-reply@" . $_SERVER['HTTP_SERVER'] . "\r\nContent-type: text/plain; charset=utf-8 \r\n";
+					mail($to, $subject, $message, $headers);
+					
+					exit ($_POST['m_orderid'] . "|error");
+                }
             }
         } 
 		else 
 		{
-            echo 'The operation not found.';
+			echo 'The operation not found';
         }
     }
 
     public function failureAction()
     {
         $helper = Mage::helper("dlpayeer");
-        if (isset($_POST["m_operation_id"]) && isset($_POST["m_sign"])) 
+		
+        if (isset($_GET["m_orderid"]) && isset($_GET["m_amount"])) 
 		{
-			$order = Mage::getModel('sales/order')->loadByIncrementId($_POST['m_orderid']);
+			$order = Mage::getModel('sales/order')->loadByIncrementId($_GET['m_orderid']);
             $helper->refillCart($order);
+			
             $order->addStatusToHistory(
                 $order->getStatus(),
                 $helper->__('Payment failed'),
                 false
             );
+			
             $order->save();
             $order->cancel()->save();
             $this->_redirect('checkout/onepage/failure');
@@ -200,17 +229,22 @@ class DL_Payeer_GateController extends Mage_Core_Controller_Front_Action
 		{
             $answer = $this->getRequest()->getParams();
         }
+		
         $this->_redirect("checkout/onepage/success");
     }
 
     protected function _sendEmailAfterPaymentSuccess($order)
     {
-        if ($order->sendNewOrderEmail()) {
+        if ($order->sendNewOrderEmail()) 
+		{
             $result = true;
             $order->setEmailSent(true);
-        } else {
+        } 
+		else 
+		{
             $result = false;
         }
+		
         return $result;
     }
 }

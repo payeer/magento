@@ -5,6 +5,7 @@ class DL_Payeer_Controller_Router extends Mage_Core_Controller_Varien_Router_Abs
     protected $_routerController;
     protected $_routerName = 'dlpayeer';
     protected $_moduleName = 'dlpayeer';
+	
     public function initControllerRouters($observer)
     {
         $front = $observer->getEvent()->getFront();
@@ -43,7 +44,6 @@ class DL_Payeer_Controller_Router extends Mage_Core_Controller_Varien_Router_Abs
             Mage::app()->getStore()->load(Mage::getModel("sales/order")->load($orderId)->getStoreId());
         }
 
-
         $request->setModuleName($this->_moduleName)
             ->setControllerName(isset($allpath[1]) ? $allpath[1] : 'gate')
             ->setActionName(isset($allpath[2]) ? $allpath[2] : 'success');
@@ -54,7 +54,6 @@ class DL_Payeer_Controller_Router extends Mage_Core_Controller_Varien_Router_Abs
 
         return true;
     }
-
 
     protected function _isOurModule($urlKey)
     {

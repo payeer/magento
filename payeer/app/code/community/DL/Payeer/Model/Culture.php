@@ -10,5 +10,4 @@ class DL_Payeer_Model_Culture extends Mage_Core_Model_Abstract
         );
         return $data;
     }
-
 }

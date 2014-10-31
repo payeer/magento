@@ -1,13 +1,6 @@
 <?xml version="1.0"?>
 
 <config>
-    <tabs>
-        <etall translate="label">
-            <label>ET Extensions</label>
-            <sort_order>400</sort_order>
-        </etall>
-    </tabs>
-
     <sections>
         <payment translate="label" module="dlpayeer">
             <groups>
@@ -26,8 +19,9 @@
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </active>
+						
                         <title translate="label">
                             <label>Title</label>
                             <frontend_type>text</frontend_type>
@@ -36,6 +30,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </title>
+						
                         <payment_text translate="label">
                             <label>Description</label>
                             <frontend_type>textarea</frontend_type>
@@ -44,6 +39,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </payment_text>
+						
                         <sort_order translate="label">
                             <label>Sort order</label>
                             <frontend_type>text</frontend_type>
@@ -60,15 +56,14 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                         </heading_payeer>
+						
                         <enable_log translate="label comment">
-                            <label>History</label>
-                            <comment><![CDATA[If Enabled - technical information records into a log file /var/log/dl_payeer.log]]></comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <label>Path to file to log payments through Payeer (for example, /payeer_orders.log)</label>
+                            <comment><![CDATA[If a path is not specified, the log is not written]]></comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>115</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_website>1</show_in_website>
                         </enable_log>
 						
 						<sMerchantURL translate="label comment">
@@ -122,35 +117,7 @@
                             <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
                         </sInvDesc>
-						
-						 <StatusUrl>
-                            <label>Status URL for Payeer</label>
-							 <comment><![CDATA[Replace YOUR_DOMAIN to your real domain and enter this URL in the store settings]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                        </StatusUrl>
-						
-						<SuccessUrl>
-                            <label>Success URL for Payeer</label>
-							<comment><![CDATA[Replace YOUR_DOMAIN to your real domain and enter this URL in the store settings]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                        </SuccessUrl>
-						
-						<FailUrl>
-                            <label>Fail URL for Payeer</label>
-							<comment><![CDATA[Replace YOUR_DOMAIN to your real domain and enter this URL in the store settings]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>200</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                        </FailUrl>
 
                         <heading_restrictions translate="label">
                             <label>Restrictions</label>
@@ -159,6 +126,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                         </heading_restrictions>
+						
                         <allowspecific translate="label">
                             <label>Payment from Applicable Countries</label>
                             <frontend_type>allowspecific</frontend_type>
@@ -168,6 +136,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </allowspecific>
+						
                         <specificcountry translate="label">
                             <label>Payment from Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
@@ -176,8 +145,8 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <!--depends><allowspecific>1</allowspecific></depends-->
                         </specificcountry>
+						
                         <min_order_total translate="label">
                             <label>Minimum Order Total</label>
                             <frontend_type>text</frontend_type>
@@ -186,6 +155,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </min_order_total>
+						
                         <max_order_total translate="label">
                             <label>Maximum Order Total</label>
                             <frontend_type>text</frontend_type>
@@ -200,7 +170,3 @@
         </payment>
     </sections>
 </config>
-
-
-
-

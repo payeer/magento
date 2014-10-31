@@ -2,11 +2,9 @@
 
 class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 {
-
     protected $_code = 'dlpayeer';
     protected $_formBlockType = 'dlpayeer/single_form';
     protected $_infoBlockType = 'dlpayeer/single_info';
-
     protected $_isGateway = true;
     protected $_canOrder = false;
     protected $_canAuthorize = false;
@@ -24,28 +22,21 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
     protected $_canCreateBillingAgreement = false;
     protected $_canManageRecurringProfiles = false;
     protected $_canEdit = false;
-
     protected $_canUseInternal = false; 
-
     protected $_isActive = 0;
     protected $_title;
     protected $_description;
-
     protected $_isLogenabled = 0;
-
 	protected $_sMerchantURL;
     protected $_sMerchantID;
     protected $_sInvDesc;
     protected $_paymentText;
     protected $_transferCurrency;
-
     protected $_sMerchantSecret;
     protected $_sMerchantIPFilter;
 	protected $_AEmail;
-
-
     protected $_configRead = false;
-
+	
     public function __construct()
     {
         parent::__construct();
@@ -88,7 +79,8 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 
     public function getConfigDataRobo($field, $storeId = null)
     {
-        if (null === $storeId) {
+        if (null === $storeId) 
+		{
             $storeId = $this->getStore();
         }
         $path = 'payment/dlpayeer/' . $field;
@@ -149,7 +141,8 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
     {
         $this->readConfig();
 
-        if (empty($this->_sMerchantID) || empty($this->_sMerchantSecret)) {
+        if (empty($this->_sMerchantID) || empty($this->_sMerchantSecret)) 
+		{
             Mage::helper("dlpayeer")
                 ->log('Please enter login information about your Payeer merchant in admin panel!');
         }
@@ -159,9 +152,10 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 		$m_shop = $this->_sMerchantID;
 		$m_orderid = $order->getIncrementId();
 		$m_amount = round($outSum, 2);
-		$m_curr = 'RUB';
+		$m_curr = $order->getBaseCurrencyCode();
 		$m_desc = base64_encode($this->_sInvDesc);
 		$m_key = $this->_sMerchantSecret;
+		
 		$arHash = array(
 			$m_shop,
 			$m_orderid,
@@ -185,7 +179,9 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
             'postData' => new Varien_Object($postData),
             'order' => $order,
         );
+		
         $postData = $result['postData']->getData();
+		
         return $postData;
     }
 
@@ -205,5 +201,4 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
         $outSum = $order->getBaseCurrency()->convert($order->getBaseGrandTotal(), $this->_transferCurrency);
         return $outSum;
     }
-
 }
