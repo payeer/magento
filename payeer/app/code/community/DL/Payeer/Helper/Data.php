@@ -8,7 +8,8 @@ class DL_Payeer_Helper_Data extends Mage_Core_Helper_Abstract
 
         $cart = Mage::getSingleton('checkout/cart');
         $items = $order->getItemsCollection();
-        foreach ($items as $item) {
+        foreach ($items as $item) 
+		{
             try 
 			{
                 $cart->addOrderItem($item);
@@ -26,7 +27,7 @@ class DL_Payeer_Helper_Data extends Mage_Core_Helper_Abstract
                 }
 				
                 $this->_redirect('customer/account/history');
-            } 
+            }
 			catch (Exception $e) 
 			{
                 $cartRefilled = false;
@@ -36,6 +37,7 @@ class DL_Payeer_Helper_Data extends Mage_Core_Helper_Abstract
                 );
             }
         }
+		
         $cart->save();
 
         return $cartRefilled;
@@ -43,20 +45,13 @@ class DL_Payeer_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function arrayToRawData($array)
     {
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value) 
+		{
             $newArray[] = $key . ": " . $value;
         }
+		
         $raw = implode("\r\n", $newArray);
+		
         return $raw;
-    }
-
-    public function isLogEnabled()
-    {
-        return Mage::getStoreConfig('payment/dlpayeer/enable_log');
-    }
-
-    public function getLogFileName()
-    {
-        return 'dl_payeer.log';
     }
 }
