@@ -151,7 +151,7 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 		
 		$m_shop = $this->_sMerchantID;
 		$m_orderid = $order->getIncrementId();
-		$m_amount = round($outSum, 2);
+		$m_amount = number_format($outSum, 2, '.', '');
 		$m_curr = $order->getBaseCurrencyCode();
 		$m_desc = base64_encode($this->_sInvDesc);
 		$m_key = $this->_sMerchantSecret;
