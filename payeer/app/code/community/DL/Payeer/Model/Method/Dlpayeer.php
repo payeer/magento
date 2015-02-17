@@ -155,7 +155,7 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 		$m_curr = $order->getBaseCurrencyCode();
 		$m_desc = base64_encode($this->_sInvDesc);
 		$m_key = $this->_sMerchantSecret;
-		
+		 
 		$arHash = array(
 			$m_shop,
 			$m_orderid,
