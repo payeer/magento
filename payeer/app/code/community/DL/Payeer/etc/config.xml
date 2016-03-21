@@ -106,7 +106,7 @@
                 <payment_text><![CDATA[Payeer® Merchant позволяет совершать платежи всеми возможными способами по всему миру!<br/><br/><a href="http://payeer.com" title="Перейти на сайт payeer.com"><img src="https://payeer.com/bitrix/templates/difiz/images/logo.png"></a><br/>]]></payment_text>
                 <allowspecific>0</allowspecific>
                 <model>dlpayeer/method_dlpayeer</model>
-				<sMerchantURL>//payeer.com/merchant/</sMerchantURL>
+				<sMerchantURL>https://payeer.com/merchant/</sMerchantURL>
             </dlpayeer>
         </payment>
     </default>

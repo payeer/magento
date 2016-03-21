@@ -29,7 +29,6 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
     protected $_isLogenabled = 0;
 	protected $_sMerchantURL;
     protected $_sMerchantID;
-    protected $_sInvDesc;
     protected $_paymentText;
     protected $_transferCurrency;
     protected $_sMerchantSecret;
@@ -51,27 +50,15 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
         }
 		
         $this->_isActive = $this->getConfigData('active');
-		
         $this->_title = $this->getConfigData('title');
-
         $this->_paymentText = $this->getConfigData('payment_text');
-		
         $this->_description = Mage::helper('cms')->getBlockTemplateProcessor()->filter($this->_paymentText);
-
 		$this->_sMerchantURL = $this->getConfigDataRobo('sMerchantURL');
-		
         $this->_sMerchantID = $this->getConfigDataRobo('sMerchantID');
-
-        $this->_sInvDesc = $this->getConfigDataRobo('sInvDesc');
-		
         $this->_transferCurrency = Mage::app()->getBaseCurrencyCode();
-
         $this->_sMerchantSecret = Mage::helper('core')->decrypt($this->getConfigDataRobo('sMerchantSecret'));
-		
         $this->_sMerchantIPFilter = Mage::helper('core')->decrypt($this->getConfigDataRobo('IPFilter'));
-		
 		$this->_AEmail = Mage::helper('core')->decrypt($this->getConfigDataRobo('sAdminEmail'));
-
         $this->_configRead = true;
 
         return;
@@ -153,7 +140,8 @@ class DL_Payeer_Model_Method_Dlpayeer extends Mage_Payment_Model_Method_Abstract
 		$m_orderid = $order->getIncrementId();
 		$m_amount = number_format($outSum, 2, '.', '');
 		$m_curr = $order->getBaseCurrencyCode();
-		$m_desc = base64_encode($this->_sInvDesc);
+		$m_curr = $m_curr == 'RUR' ? 'RUB' : $m_curr;
+		$m_desc = base64_encode('Payment № ' . $m_orderid);
 		$m_key = $this->_sMerchantSecret;
 		 
 		$arHash = array(
