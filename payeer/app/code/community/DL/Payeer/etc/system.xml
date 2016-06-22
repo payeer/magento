@@ -110,15 +110,6 @@
                             <show_in_website>1</show_in_website>
                         </sAdminEmail>
 
-                        <sInvDesc>
-                            <label>Order description</label>
-                            <comment><![CDATA[Order description on Payment Payeer website]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                        </sInvDesc>
-
                         <heading_restrictions translate="label">
                             <label>Restrictions</label>
                             <frontend_model>dlpayeer/adminhtml_system_config_form_field_heading</frontend_model>
